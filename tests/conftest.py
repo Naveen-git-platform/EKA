@@ -72,3 +72,26 @@ def concept_env(settings):
     ids = {name: svc.ingest_bytes(name, text.encode()).doc_id for name, text in CONCEPT_DOCS.items()}
     yield HybridRetriever(emb, store, svc.bm25), svc, ids
     store.close()
+
+
+PLAN_JSON = '{"strategy": "direct", "standalone_query": "how many PTO days", "sub_queries": ["how many PTO days"], "reasoning": "simple"}'
+CRITIC_OK_JSON = '{"sufficient": true, "relevance": 0.9, "coverage": 0.9, "relevant_sources": [1]}'
+
+
+@pytest.fixture
+def api_env(settings, embedder, vector_store):
+    """(TestClient, Container, ScriptedLLM) wired with fakes - no network, no model downloads."""
+    from fastapi.testclient import TestClient
+
+    from app.core.container import Container
+    from app.core.llm import ScriptedLLM
+    from app.main import create_app
+
+    llm = ScriptedLLM({
+        "planner": PLAN_JSON,
+        "critic": CRITIC_OK_JSON,
+        "answer": "Full-time employees receive 20 days of PTO [1].",
+    })
+    container = Container.build(settings, embedder=embedder, llm=llm, vector_store=vector_store)
+    client = TestClient(create_app(settings, container=container))
+    return client, container, llm
