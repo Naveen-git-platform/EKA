@@ -17,6 +17,8 @@ MAX_CHUNK_CHARS = 1500
 _CITE_RE = re.compile(r"\[(\d+(?:\s*[,;]\s*\d+)*)\]")
 # Some models (e.g. gpt-oss) write citations as 【1】, ［1］ or 〔1〕 instead of [1]; normalise before parsing.
 _ALT_CITE_RE = re.compile(r"[【［〔\[]\s*(\d+(?:\s*[,;，]\s*\d+)*)\s*[】］〕\]]")
+# Browsing-style markers such as 【4†L1-L5】 (source number, dagger, line range) -> keep only the source number.
+_DAGGER_CITE_RE = re.compile(r"[【［〔]\s*(\d+)\s*†[^】］〕\n]*[】］〕]")
 
 
 def select_context(state: AgentState) -> list[dict[str, Any]]:
@@ -38,6 +40,7 @@ def select_context(state: AgentState) -> list[dict[str, Any]]:
 def extract_citations(answer: str, n_sources: int) -> tuple[str, list[int]]:
     """Return (answer with invalid citation numbers removed, valid cited source numbers in order of appearance)."""
     cited: list[int] = []
+    answer = _DAGGER_CITE_RE.sub(lambda m: f"[{m.group(1)}]", answer)
     answer = _ALT_CITE_RE.sub(lambda m: f"[{m.group(1).replace('，', ',')}]", answer)
 
     def repl(m: re.Match[str]) -> str:

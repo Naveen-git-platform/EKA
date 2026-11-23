@@ -11,3 +11,6 @@ data/qdrant/
 data/eval_results.db
 data/uploads/
 .streamlit/secrets.toml
+
+# third-party test documents (not ours to redistribute)
+test_docs/

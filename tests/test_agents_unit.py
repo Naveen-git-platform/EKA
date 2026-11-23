@@ -261,3 +261,12 @@ def test_extract_citations_normalises_cjk_bracket_styles():
     assert cited == [1, 2]
     assert "【" not in cleaned and "［" not in cleaned and "[9]" not in cleaned
     assert "[1]" in cleaned and "[2]" in cleaned and "[1][2]" in cleaned
+
+
+def test_extract_citations_handles_dagger_line_range_markers():
+    """Regression: found in live test on the Claude docs - gpt-oss wrote 【4†L1-L5】 and 【1†L1-L3】【2†L1-L3】."""
+    text = "Put static text first【1†L1-L5】. Use a breakpoint【2†L7-L9】. Both ways【1†L1-L3】【2†L1-L3】. Fake【7†L1-L2】."
+    cleaned, cited = extract_citations(text, n_sources=2)
+    assert cited == [1, 2]
+    assert "†" not in cleaned and "【" not in cleaned and "[7]" not in cleaned
+    assert cleaned.count("[1]") == 2 and cleaned.count("[2]") == 2
