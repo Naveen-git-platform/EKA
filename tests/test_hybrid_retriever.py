@@ -14,7 +14,7 @@ from app.retrieval.hybrid_retriever import (
     fuse_rrf,
     fuse_weighted,
 )
-from tests.helpers import CONCEPT_DOCS, CONCEPTS, ConceptEmbedder
+from tests.helpers import CONCEPTS, ConceptEmbedder
 
 # ------------------------------------------------------------------ pure fusion maths
 
@@ -53,19 +53,6 @@ def test_weighted_equal_scores_and_empty():
 
 
 # ------------------------------------------------------------------ retriever on a concept corpus
-
-
-@pytest.fixture
-def concept_env(settings):
-    emb = ConceptEmbedder(CONCEPTS)
-    store = VectorStore.in_memory(dim=emb.dim)
-    svc = IngestionService.from_settings(settings, emb, store)
-    ids = {}
-    for name, text in CONCEPT_DOCS.items():
-        ids[name] = svc.ingest_bytes(name, text.encode()).doc_id
-    retriever = HybridRetriever(emb, store, svc.bm25)
-    yield retriever, svc, ids
-    store.close()
 
 
 def top_files(results):
