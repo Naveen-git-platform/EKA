@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.env
+*.egg-info/
+# runtime state
+data/store/
+data/qdrant/
+data/eval_results.db
+data/uploads/
+.streamlit/secrets.toml
