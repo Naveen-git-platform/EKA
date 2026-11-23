@@ -39,8 +39,9 @@ def test_sample_docs_ingest_with_expected_metadata(loaded):
 
 def test_eval_questions_schema():
     qs = json.loads(EVAL_QUESTIONS.read_text(encoding="utf-8"))
-    assert len(qs) >= 15
+    assert len(qs) >= 30
     assert len({q["id"] for q in qs}) == len(qs)
+    assert {q["category"] for q in qs} == {"standard", "paraphrase", "keyword"}
     for q in qs:
         assert q["question"].endswith("?")
         assert q["ground_truth"] and q["evidence"]

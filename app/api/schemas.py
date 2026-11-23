@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # ------------------------------------------------------------------ documents
@@ -82,3 +82,39 @@ class QueryResponse(BaseModel):
     elapsed_ms: float
     trace: list[dict[str, Any]]
     errors: list[str]
+
+
+# ------------------------------------------------------------------ evaluation
+class EvaluateRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=2000)
+    ground_truth: str | None = Field(default=None, max_length=4000)
+    top_k: int | None = Field(default=None, ge=1, le=20)
+    doc_ids: list[str] | None = Field(default=None, max_length=50)
+
+    @field_validator("question")
+    @classmethod
+    def _not_blank(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("question must not be blank")
+        return v
+
+
+class EvalCaseIn(BaseModel):
+    question: str = Field(min_length=1, max_length=2000)
+    ground_truth: str | None = Field(default=None, max_length=4000)
+    id: str | None = None
+
+
+class BatchEvaluateRequest(BaseModel):
+    use_sample: bool = False
+    cases: list[EvalCaseIn] | None = Field(default=None, max_length=100)
+    limit: int | None = Field(default=None, ge=1, le=100)
+    name: str | None = Field(default=None, max_length=100)
+    top_k: int | None = Field(default=None, ge=1, le=20)
+
+    @model_validator(mode="after")
+    def _exactly_one_source(self) -> BatchEvaluateRequest:
+        if self.use_sample == bool(self.cases):
+            raise ValueError("provide either use_sample=true or a non-empty cases list (not both)")
+        return self

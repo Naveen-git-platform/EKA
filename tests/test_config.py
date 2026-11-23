@@ -11,7 +11,7 @@ def test_defaults():
     assert s.llm_provider == "groq"
     assert s.embedding_provider == "sentence-transformers"
     assert s.chunk_size == 800 and s.chunk_overlap == 120
-    assert s.fusion_method == "rrf"
+    assert s.fusion_method == "weighted" and s.vector_weight == 0.7
     assert s.store_dir == s.data_dir / "store"
 
 

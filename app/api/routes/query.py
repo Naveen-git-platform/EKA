@@ -6,6 +6,7 @@ from typing import Any
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
+from starlette.background import BackgroundTask
 
 from app.agents.state import EVENT_CITATIONS, EVENT_DONE, EVENT_ERROR, EVENT_TOKEN
 from app.api.deps import ContainerDep
@@ -47,17 +48,38 @@ async def query(req: QueryRequest, container: ContainerDep):
     `plan` -> `retrieval` -> `critique` (repeats on re-retrieval) -> `token`* -> `citations` -> `done`
     (an `error` event may appear before `done`). With `stream=false` a single JSON object is returned.
     """
+    want_eval = req.evaluate or container.settings.eval_after_query
+
     if not req.stream:
         result = await container.agent.run(req.question, **_agent_kwargs(req))
+        if want_eval and result["ok"] and result["grounded"]:
+            container.evaluator.schedule_sample(req.question, result["answer"], result["contexts"],
+                                                latency_ms=result["elapsed_ms"])
         return QueryResponse(question=req.question, **{k: result[k] for k in (
             "answer", "ok", "grounded", "citations", "sources", "plan", "critique", "iterations", "elapsed_ms",
             "trace", "errors")})
+
+    final: dict[str, Any] = {}  # what the stream produced; read by the background task afterwards
+
+    async def after_stream() -> None:
+        """Runs once the response has been fully sent: optionally score the answer in the background.
+
+        Must be `async`: Starlette runs sync background tasks in a worker thread that has no event loop,
+        and scheduling the evaluation task needs the server's loop.
+        """
+        done = final.get("done")
+        if want_eval and done and done.get("ok") and done.get("grounded"):
+            sources = final.get("citations", {}).get("sources", [])
+            container.evaluator.schedule_sample(req.question, done["answer"], [s["text"] for s in sources],
+                                                latency_ms=done.get("elapsed_ms"))
 
     async def stream() -> AsyncIterator[str]:
         saw_done = False
         try:
             async for ev in _events(container, req):
                 saw_done = saw_done or ev["type"] == EVENT_DONE
+                if ev["type"] in (EVENT_DONE, EVENT_CITATIONS):
+                    final[ev["type"]] = ev
                 yield format_sse(ev)
         except Exception as exc:  # noqa: BLE001 - a stream that has started can only report errors in-band
             logger.exception("Streaming query failed")
@@ -66,4 +88,5 @@ async def query(req: QueryRequest, container: ContainerDep):
                 yield format_sse({"type": EVENT_DONE, "ok": False, "answer": "", "iterations": 0, "elapsed_ms": 0.0,
                                   "trace": [], "errors": [str(exc)], "grounded": False})
 
-    return StreamingResponse(stream(), media_type="text/event-stream", headers=SSE_HEADERS)
+    return StreamingResponse(stream(), media_type="text/event-stream", headers=SSE_HEADERS,
+                             background=BackgroundTask(after_stream))

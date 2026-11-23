@@ -65,9 +65,9 @@ class Settings(BaseSettings):
 
     # --- retrieval ---
     retrieval_top_k: int = Field(default=5, gt=0, le=50)
-    fusion_method: FusionMethod = "rrf"
+    fusion_method: FusionMethod = "weighted"
     rrf_k: int = Field(default=60, gt=0)
-    vector_weight: float = Field(default=0.5, ge=0.0, le=1.0)
+    vector_weight: float = Field(default=0.7, ge=0.0, le=1.0)
 
     # --- agents ---
     max_retrieval_loops: int = Field(default=2, ge=0, le=5)
@@ -76,6 +76,9 @@ class Settings(BaseSettings):
     # --- evaluation ---
     eval_backend: EvalBackend = "custom"
     eval_after_query: bool = False
+    eval_concurrency: int = Field(default=2, ge=1, le=16)
+    eval_questions_path: Path = Path("data/eval/questions.json")
+    sample_docs_dir: Path = Path("data/sample_docs")
 
     # --- frontend ---
     backend_url: str = "http://localhost:8000"

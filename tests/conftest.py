@@ -35,6 +35,8 @@ def settings(tmp_path) -> Settings:
         embedding_dim=EMBED_DIM,
         chunk_size=400,
         chunk_overlap=60,
+        eval_questions_path=EVAL_QUESTIONS,
+        sample_docs_dir=SAMPLE_DOCS,
     )
 
 
@@ -76,22 +78,32 @@ def concept_env(settings):
 
 PLAN_JSON = '{"strategy": "direct", "standalone_query": "how many PTO days", "sub_queries": ["how many PTO days"], "reasoning": "simple"}'
 CRITIC_OK_JSON = '{"sufficient": true, "relevance": 0.9, "coverage": 0.9, "relevant_sources": [1]}'
+ANSWER_TEXT = "Full-time employees receive 20 days of PTO [1]."
+
+# Scripted judge responses (same ScriptedLLM serves agents and judge in API tests)
+EVAL_SCRIPTS = {
+    "eval_claims": '{"claims": ["Full-time employees receive 20 days of PTO"]}',
+    "eval_verify": '{"verdicts": [{"claim": "x", "supported": true}]}',
+    "eval_questions": '{"questions": ["How many PTO days do employees get?"], "noncommittal": false}',
+    "eval_ctx_relevance": '{"verdicts": [{"index": 1, "useful": true}]}',
+    "eval_recall": '{"statements": [{"statement": "20 days", "attributed": true}]}',
+}
 
 
 @pytest.fixture
 def api_env(settings, embedder, vector_store):
-    """(TestClient, Container, ScriptedLLM) wired with fakes - no network, no model downloads."""
+    """(TestClient, Container, ScriptedLLM) wired with fakes - no network, no model downloads.
+
+    The client runs inside a persistent event-loop portal so background tasks (auto-evaluation, batches)
+    keep running between requests, exactly as under uvicorn.
+    """
     from fastapi.testclient import TestClient
 
     from app.core.container import Container
     from app.core.llm import ScriptedLLM
     from app.main import create_app
 
-    llm = ScriptedLLM({
-        "planner": PLAN_JSON,
-        "critic": CRITIC_OK_JSON,
-        "answer": "Full-time employees receive 20 days of PTO [1].",
-    })
+    llm = ScriptedLLM({"planner": PLAN_JSON, "critic": CRITIC_OK_JSON, "answer": ANSWER_TEXT, **EVAL_SCRIPTS})
     container = Container.build(settings, embedder=embedder, llm=llm, vector_store=vector_store)
-    client = TestClient(create_app(settings, container=container))
-    return client, container, llm
+    with TestClient(create_app(settings, container=container)) as client:
+        yield client, container, llm

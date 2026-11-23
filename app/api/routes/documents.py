@@ -82,6 +82,27 @@ async def upload_documents(container: ContainerDep, files: list[UploadFile] = Fi
     return body
 
 
+@router.post("/samples/load", response_model=UploadResponse)
+async def load_sample_documents(container: ContainerDep):
+    """Index the bundled sample corpus (employee handbook, security policy, product FAQ, incident runbook)."""
+    directory = container.settings.sample_docs_dir
+    paths = sorted(p for p in directory.glob("*") if p.is_file()) if directory.exists() else []
+    if not paths:
+        raise HTTPException(status_code=404, detail=f"No sample documents found in {directory}")
+    results: list[UploadItemResult] = []
+    for p in paths:
+        try:
+            res = await asyncio.to_thread(container.ingestion.ingest_path, p)
+            results.append(UploadItemResult(filename=res.filename, status=res.status, doc_id=res.doc_id,
+                                            chunk_count=res.chunk_count, page_count=res.page_count,
+                                            replaced_doc_id=res.replaced_doc_id))
+        except Exception as exc:  # noqa: BLE001
+            results.append(UploadItemResult(filename=p.name, status="failed", error=str(exc),
+                                            error_type=type(exc).__name__))
+    return UploadResponse(results=results, indexed=sum(r.status != "failed" for r in results),
+                          failed=sum(r.status == "failed" for r in results))
+
+
 @router.get("/documents", response_model=DocumentListResponse)
 def list_documents(container: ContainerDep) -> DocumentListResponse:
     docs = container.ingestion.list_documents()

@@ -211,6 +211,58 @@ QUESTIONS = [
 ]
 
 
+# Harder retrieval cases. "paraphrase": little word overlap with the source text (dense retrieval should win).
+# "keyword": exact identifiers / codes (BM25 should win). Same tuple layout as QUESTIONS.
+PARAPHRASE_QUESTIONS = [
+    ("p01", "What is the yearly vacation allowance for permanent employees?", "20 days per calendar year.",
+     ["employee_handbook.md"], ["20 days of paid time off"]),
+    ("p02", "How long can a new mother stay at home on full salary after having a baby?",
+     "16 weeks of fully paid parental leave for the primary caregiver.", ["employee_handbook.md"],
+     ["16 weeks of fully paid parental leave"]),
+    ("p03", "What are the rules about coming into the office?",
+     "At least 2 days per week, with Tuesday and Thursday as anchor days.", ["employee_handbook.md"],
+     ["at least 2 days per week"]),
+    ("p04", "How much money do I get to set up my workspace at home?", "A one-time home office stipend of $500.",
+     ["employee_handbook.md"], ["home office stipend of $500"]),
+    ("p05", "What is the shortest secret phrase allowed for logging in?", "Passwords need at least 14 characters.",
+     ["security_policy.docx"], ["at least 14 characters long"]),
+    ("p06", "How fast must I tell the security team when something suspicious happens?", "Within 1 hour of discovery.",
+     ["security_policy.docx"], ["within 1 hour of discovery"]),
+    ("p07", "What happens to a former colleague's system privileges after they depart?",
+     "Their access is revoked within 24 hours of departure.", ["security_policy.docx"],
+     ["within 24 hours of their departure"]),
+    ("p08", "Which subscription tier includes single sign-on?", "The Business plan (Enterprise adds SAML provisioning).",
+     ["product_faq.txt"], ["single sign-on (sso)"]),
+    ("p09", "How can I get compensation if the service is unavailable too often?",
+     "A service credit of 10% of the monthly fee if uptime falls below 99.9%.", ["product_faq.txt"],
+     ["service credit of 10%"]),
+    ("p10", "Who is the first person paged when production breaks completely?",
+     "The on-call engineer is paged immediately for a SEV-1.", ["incident_runbook.pdf"],
+     ["on-call engineer is paged immediately"]),
+]
+
+KEYWORD_QUESTIONS = [
+    ("k01", "What does SEC-POL-014 refer to?", "The tracking ID of the Information Security Policy.",
+     ["security_policy.docx"], ["SEC-POL-014"]),
+    ("k02", "What does ERR-7002 mean?",
+     "The message queue backlog is above 10,000 messages; scale the worker deployment.",
+     ["incident_runbook.pdf"], ["ERR-7002"]),
+    ("k03", "What is ERR-4290?", "A misconfigured rate limiter.", ["incident_runbook.pdf"], ["ERR-4290"]),
+    ("k04", "What is DB_POOL_MAX used for?",
+     "Raising it to 200 fixes ERR-5031, an exhausted database connection pool.", ["incident_runbook.pdf"],
+     ["DB_POOL_MAX"]),
+    ("k05", "What is 1-800-555-0142?", "Acme's anonymous ethics hotline.", ["employee_handbook.md"],
+     ["1-800-555-0142"]),
+    ("k06", "What is FIDO2 needed for?", "Production and administrator access requires a FIDO2 hardware security key.",
+     ["security_policy.docx"], ["FIDO2 hardware security key"]),
+    ("k07", "Is AP-Singapore a supported region?",
+     "Yes - workspaces can be hosted in US-East, EU-Frankfurt, or AP-Singapore.", ["product_faq.txt"],
+     ["AP-Singapore"]),
+    ("k08", "What is Jamf used for?", "Mobile device management enrollment for laptops.", ["security_policy.docx"],
+     ["Jamf"]),
+]
+
+
 # --------------------------------------------------------------------------- writers
 def write_docx(path: Path, title: str, sections: list[tuple[str, list[str]]]) -> None:
     from docx import Document
@@ -249,8 +301,9 @@ def main() -> None:
     write_docx(DOCS / "security_policy.docx", "Acme Corp Information Security Policy", SECURITY_SECTIONS)
     write_pdf(DOCS / "incident_runbook.pdf", "Acme Corp Incident Response Runbook", RUNBOOK_SECTIONS)
     payload = [
-        {"id": q[0], "question": q[1], "ground_truth": q[2], "relevant_docs": q[3], "evidence": q[4]}
-        for q in QUESTIONS
+        {"id": q[0], "category": cat, "question": q[1], "ground_truth": q[2], "relevant_docs": q[3], "evidence": q[4]}
+        for cat, group in (("standard", QUESTIONS), ("paraphrase", PARAPHRASE_QUESTIONS), ("keyword", KEYWORD_QUESTIONS))
+        for q in group
     ]
     (EVAL / "questions.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Wrote {len(list(DOCS.iterdir()))} documents and {len(payload)} eval questions")

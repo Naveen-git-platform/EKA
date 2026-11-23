@@ -80,9 +80,9 @@ class HybridRetriever:
         vector_store: VectorStore,
         bm25: BM25Index,
         *,
-        fusion: FusionMethod = "rrf",
+        fusion: FusionMethod = "weighted",
         rrf_k: int = 60,
-        vector_weight: float = 0.5,
+        vector_weight: float = 0.7,
         candidate_multiplier: int = 4,
     ) -> None:
         if fusion not in ("rrf", "weighted"):
