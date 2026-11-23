@@ -1,0 +1,19 @@
+ACME CLOUDSYNC - PRODUCT FAQ
+
+PLANS AND PRICING
+CloudSync has three plans. The Starter plan costs $12 per user per month, supports up to 10 users, and includes 100 GB of storage. The Business plan costs $29 per user per month and adds single sign-on (SSO), 1 TB of storage per user, and audit logs. The Enterprise plan has custom pricing and adds SAML provisioning, a dedicated support engineer, and a 99.99% uptime SLA. Every plan includes a free 14-day trial.
+
+API RATE LIMITS
+API requests are rate limited per workspace. Starter allows 60 requests per minute, Business allows 600 requests per minute, and Enterprise allows 6,000 requests per minute. When the limit is exceeded the API returns HTTP 429 together with a Retry-After header that tells the client how many seconds to wait.
+
+SERVICE LEVEL AGREEMENT
+The Business plan is covered by a 99.9% monthly uptime SLA. If uptime falls below 99.9% the customer receives a service credit of 10% of the monthly fee, and if uptime falls below 99.0% the credit is 25% of the monthly fee. Credits must be requested within 30 days.
+
+DATA RETENTION AND RECOVERY
+Deleted files stay recoverable for 30 days on the Starter plan and for 90 days on the Business plan. After that they are permanently removed. Customers can export all of their data as CSV or JSON at any time.
+
+SUPPORT
+Starter customers get email support with a 48 hour response target. Business customers get chat support Monday to Friday with a 4 hour response target. Enterprise customers get 24/7 support, with a 1 hour response target for Severity 1 issues.
+
+REGIONS
+Workspaces can be hosted in US-East, EU-Frankfurt, or AP-Singapore. The region is chosen at workspace creation and cannot be changed afterwards.

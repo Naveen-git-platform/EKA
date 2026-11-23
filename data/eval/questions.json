@@ -1,0 +1,202 @@
+[
+  {
+    "id": "q01",
+    "question": "How many PTO days do full-time employees get each year?",
+    "ground_truth": "20 days per calendar year.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "20 days"
+    ]
+  },
+  {
+    "id": "q02",
+    "question": "How many weeks of paid parental leave does the primary caregiver get?",
+    "ground_truth": "16 weeks of fully paid leave.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "16 weeks"
+    ]
+  },
+  {
+    "id": "q03",
+    "question": "What is the daily meal allowance when I am traveling?",
+    "ground_truth": "$75 per day.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "$75 per day"
+    ]
+  },
+  {
+    "id": "q04",
+    "question": "How long do I have to submit an expense report?",
+    "ground_truth": "Within 30 days of the purchase.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "within 30 days"
+    ]
+  },
+  {
+    "id": "q05",
+    "question": "How many days per year can I work from another country?",
+    "ground_truth": "A maximum of 20 days per calendar year.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "maximum of 20 days"
+    ]
+  },
+  {
+    "id": "q06",
+    "question": "What is the minimum password length?",
+    "ground_truth": "14 characters.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "14 characters"
+    ]
+  },
+  {
+    "id": "q07",
+    "question": "How quickly must a suspected security incident be reported?",
+    "ground_truth": "Within 1 hour of discovery.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "within 1 hour"
+    ]
+  },
+  {
+    "id": "q08",
+    "question": "What encryption is required for Restricted data?",
+    "ground_truth": "AES-256 at rest and TLS 1.2 or higher in transit.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "AES-256"
+    ]
+  },
+  {
+    "id": "q09",
+    "question": "How soon is access revoked after an employee leaves the company?",
+    "ground_truth": "Within 24 hours.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "within 24 hours"
+    ]
+  },
+  {
+    "id": "q10",
+    "question": "How much does the Business plan cost per user?",
+    "ground_truth": "$29 per user per month.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "$29 per user per month"
+    ]
+  },
+  {
+    "id": "q11",
+    "question": "What is the API rate limit on the Enterprise plan?",
+    "ground_truth": "6,000 requests per minute.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "6,000 requests per minute"
+    ]
+  },
+  {
+    "id": "q12",
+    "question": "What SLA credit is given if uptime drops below 99.9%?",
+    "ground_truth": "A 10% service credit.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "credit of 10%"
+    ]
+  },
+  {
+    "id": "q13",
+    "question": "How long can deleted files be recovered on the Business plan?",
+    "ground_truth": "90 days.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "90 days on the Business plan"
+    ]
+  },
+  {
+    "id": "q14",
+    "question": "What does error ERR-5031 mean and how do I fix it?",
+    "ground_truth": "The database connection pool is exhausted; raise DB_POOL_MAX to 200 and restart the affected pods.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "ERR-5031"
+    ]
+  },
+  {
+    "id": "q15",
+    "question": "What are the RTO and RPO for database recovery?",
+    "ground_truth": "RTO is 4 hours and RPO is 5 minutes.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "recovery time objective"
+    ]
+  },
+  {
+    "id": "q16",
+    "question": "Within how many minutes must an incident commander be assigned for a SEV-1?",
+    "ground_truth": "Within 10 minutes.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "within 10 minutes"
+    ]
+  },
+  {
+    "id": "q17",
+    "question": "Which command rolls back the api-gateway deployment?",
+    "ground_truth": "kubectl rollout undo deployment/api-gateway -n production",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "kubectl rollout undo"
+    ]
+  },
+  {
+    "id": "q18",
+    "question": "If a SEV-1 incident exposes EU customer data, what must happen and by when?",
+    "ground_truth": "Follow the Security Policy incident reporting steps: notify the authority and affected customers within 72 hours (GDPR); the runbook also requires a blameless postmortem within 5 business days.",
+    "relevant_docs": [
+      "security_policy.docx",
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "within 72 hours",
+      "within 5 business days"
+    ]
+  }
+]
