@@ -121,7 +121,7 @@ All settings are environment variables (see [`.env.example`](.env.example)).
 | Variable | Default | Meaning |
 |---|---|---|
 | `LLM_PROVIDER` | `groq` | `groq` \| `openai` \| `together` \| `fake` (offline demo) |
-| `LLM_MODEL` | provider default | e.g. `llama-3.3-70b-versatile`, `gpt-4o-mini` |
+| `LLM_MODEL` | provider default | Groq default `openai/gpt-oss-120b`; e.g. `openai/gpt-oss-20b`, `gpt-4o-mini` |
 | `GROQ_API_KEY` / `OPENAI_API_KEY` / `TOGETHER_API_KEY` | – | Key for the selected provider |
 | `EMBEDDING_PROVIDER` | `sentence-transformers` | `sentence-transformers` \| `openai` \| `fake` |
 | `EMBEDDING_MODEL` / `EMBEDDING_DIM` | `all-MiniLM-L6-v2` / `384` | Changing the model needs a new `QDRANT_COLLECTION` (dimension is checked at startup) |
@@ -240,9 +240,11 @@ LLM, and the Streamlit script driven by `streamlit.testing.AppTest`.
 
 ## Verification status & limitations
 
-- The OpenAI-compatible LLM client is tested at the HTTP level (retries, JSON-mode fallback, SSE streaming) with a mock transport, and the
-  agents/judge are tested with scripted LLMs. **It has not been run against a live Groq/OpenAI/Together endpoint in this repository's
-  development** — run the CLI above with your key for the first live numbers.
+- **Live LLM check (Groq, `openai/gpt-oss-120b`, free tier):** 9 sample questions (standard + paraphrased) and one streamed multi-document
+  question ran end to end with correct, cited answers and no errors; faithfulness, context precision and context recall were 1.0 on every
+  question evaluated (answer relevancy 0.31–0.95 — it is sensitive to the embedder and noisy on short answers). That is a small smoke test,
+  not a benchmark. The free tier's token-per-minute limit triggers retries (the client honours the provider's wait hint), so batches are slow.
+  OpenAI and Together are supported through the same client but were **not** run live. Pick a model your account can access via `LLM_MODEL`.
 - The benchmark corpus is small and synthetic (see above); the evaluation scores shown in screenshots are from the offline heuristic judge.
 - Scanned (image-only) PDFs have no extractable text and are rejected; there is no OCR.
 - No authentication or multi-tenancy; CORS is open by default (`CORS_ORIGINS`). Conversation history lives in the browser session.

@@ -15,7 +15,7 @@ EvalBackend = Literal["custom", "ragas"]
 
 # provider -> (base_url, default_model)
 LLM_PROVIDER_DEFAULTS: dict[str, tuple[str | None, str]] = {
-    "groq": ("https://api.groq.com/openai/v1", "llama-3.3-70b-versatile"),
+    "groq": ("https://api.groq.com/openai/v1", "openai/gpt-oss-120b"),
     "openai": (None, "gpt-4o-mini"),
     "together": ("https://api.together.xyz/v1", "meta-llama/Llama-3.3-70B-Instruct-Turbo"),
     "fake": (None, "fake-llm"),
@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     llm_model: str = ""
     llm_temperature: float = Field(default=0.1, ge=0.0, le=2.0)
     llm_timeout_seconds: float = Field(default=60.0, gt=0)
-    llm_max_retries: int = Field(default=3, ge=0, le=10)
+    llm_max_retries: int = Field(default=5, ge=0, le=10)
     groq_api_key: str = ""
     openai_api_key: str = ""
     together_api_key: str = ""

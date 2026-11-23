@@ -228,6 +228,43 @@ def test_build_llm_factory():
     assert isinstance(build_llm(Settings(_env_file=None, llm_provider="fake")), OfflineLLM)
     g = build_llm(Settings(_env_file=None, llm_provider="groq", groq_api_key="k"))
     assert isinstance(g, OpenAICompatLLM)
-    assert g.base_url == "https://api.groq.com/openai/v1" and g.model == "llama-3.3-70b-versatile"
+    assert g.base_url == "https://api.groq.com/openai/v1" and g.model == "openai/gpt-oss-120b"
     o = build_llm(Settings(_env_file=None, llm_provider="openai", openai_api_key="k", llm_model="gpt-4o"))
     assert o.base_url == "https://api.openai.com/v1" and o.model == "gpt-4o"
+
+
+# ------------------------------------------------------------------ retry delay honours provider hints
+@pytest.mark.parametrize(
+    "headers,message,expected",
+    [
+        ({"retry-after": "7"}, "x", 7.25),
+        ({}, "Rate limit reached. Please try again in 3.2475s. Need more tokens?", 3.4975),
+        ({}, "Please try again in 1m5.5s.", 30.0),  # 65.5 s hint is capped at 30 s
+        ({}, "something unrelated", 0.5),  # no hint -> exponential backoff (attempt 0 = base)
+    ],
+)
+def test_retry_delay(headers, message, expected):
+    llm = OpenAICompatLLM("k", "m", backoff_base=0.5)
+    resp = httpx.Response(429, headers=headers, json={"error": {"message": message}}, request=httpx.Request("POST", "http://x"))
+    assert llm._retry_delay(resp, 0) == pytest.approx(expected)
+
+
+async def test_rate_limit_hint_in_body_is_awaited_then_succeeds(monkeypatch):
+    """Regression: Groq 429s carry the wait only in the message body; the first live run gave up too early."""
+    calls, slept = {"n": 0}, []
+
+    def handler(req):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return httpx.Response(429, json={"error": {"message": "Rate limit. Please try again in 2.0s."}})
+        return httpx.Response(200, json=ok_body("done"))
+
+    async def fake_sleep(s):
+        slept.append(s)
+
+    import app.core.llm as llm_mod
+
+    monkeypatch.setattr(llm_mod.asyncio, "sleep", fake_sleep)
+    llm = OpenAICompatLLM("k", "m", "https://x/v1", transport=httpx.MockTransport(handler), backoff_base=0.5, max_retries=2)
+    assert await llm.complete(MSGS) == "done"
+    assert slept == [pytest.approx(2.25)]

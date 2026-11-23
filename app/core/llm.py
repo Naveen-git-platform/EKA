@@ -52,6 +52,7 @@ class LLMClient(Protocol):
 
 # ============================================================================ real client
 _RETRY_STATUS = {408, 409, 425, 429, 500, 502, 503, 504}
+_RETRY_HINT_RE = re.compile(r"try again in (?:(\d+)m)?\s*(\d+(?:\.\d+)?)s", re.IGNORECASE)
 
 
 class OpenAICompatLLM:
@@ -106,6 +107,23 @@ class OpenAICompatLLM:
     async def _sleep(self, attempt: int) -> None:
         await asyncio.sleep(min(self._backoff * (2**attempt), 8.0))
 
+    def _retry_delay(self, resp: httpx.Response, attempt: int) -> float:
+        """Seconds to wait before retrying: the server's own hint if present, else exponential backoff.
+
+        Providers tell us either via a `Retry-After` header or in the message ("Please try again in 3.2s",
+        "...in 1m5.5s"). Honouring it matters on rate-limited free tiers. Capped at 30 s.
+        """
+        backoff = min(self._backoff * (2**attempt), 8.0)
+        header = resp.headers.get("retry-after", "")
+        try:
+            hinted = float(header)
+        except ValueError:
+            m = _RETRY_HINT_RE.search(self._error_text(resp))
+            hinted = (int(m.group(1) or 0) * 60 + float(m.group(2))) if m else 0.0
+        if hinted <= 0:
+            return backoff
+        return min(max(hinted + (0.25 if self._backoff else 0.0), backoff), 30.0)
+
     @staticmethod
     def _error_text(resp: httpx.Response) -> str:
         try:
@@ -147,10 +165,10 @@ class OpenAICompatLLM:
                     use_json_mode = False  # provider/model lacks JSON mode: retry as plain text
                     continue
                 if resp.status_code in _RETRY_STATUS and attempt < self.max_retries:
-                    wait = resp.headers.get("retry-after")
-                    logger.warning("LLM[%s] HTTP %d (attempt %d), retrying", task, resp.status_code, attempt + 1)
-                    await (asyncio.sleep(min(float(wait), 20)) if wait and wait.replace(".", "").isdigit()
-                           else self._sleep(attempt))
+                    delay = self._retry_delay(resp, attempt)
+                    logger.warning("LLM[%s] HTTP %d (attempt %d), retrying in %.1fs", task, resp.status_code,
+                                   attempt + 1, delay)
+                    await asyncio.sleep(delay)
                     continue
                 if resp.status_code >= 400:
                     raise LLMError(f"LLM HTTP {resp.status_code}: {self._error_text(resp)}")
@@ -180,8 +198,10 @@ class OpenAICompatLLM:
                         if resp.status_code >= 400:
                             await resp.aread()
                             if resp.status_code in _RETRY_STATUS and attempt < self.max_retries:
-                                logger.warning("LLM[%s] stream HTTP %d, retrying", task, resp.status_code)
-                                await self._sleep(attempt)
+                                delay = self._retry_delay(resp, attempt)
+                                logger.warning("LLM[%s] stream HTTP %d, retrying in %.1fs",
+                                               task, resp.status_code, delay)
+                                await asyncio.sleep(delay)
                                 continue
                             raise LLMError(f"LLM HTTP {resp.status_code}: {self._error_text(resp)}")
                         async for line in resp.aiter_lines():

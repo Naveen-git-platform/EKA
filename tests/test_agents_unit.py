@@ -252,3 +252,12 @@ async def test_answerer_llm_failure_marks_not_ok():
 async def test_answerer_empty_response_marks_not_ok():
     out = await AnswerAgent(ScriptedLLM({"answer": "   "}))({"query": "q", "retrieved": [chunk(1)]})
     assert out["ok"] is False and "empty" in out["errors"][0]
+
+
+def test_extract_citations_normalises_cjk_bracket_styles():
+    """Regression: gpt-oss (via Groq) writes citations as 【1】 - found in the first live run."""
+    text = "Employees accrue 20 days【1】. Parental leave is 16 weeks［2］. Both apply【1，2】. Fake【9】."
+    cleaned, cited = extract_citations(text, n_sources=2)
+    assert cited == [1, 2]
+    assert "【" not in cleaned and "［" not in cleaned and "[9]" not in cleaned
+    assert "[1]" in cleaned and "[2]" in cleaned and "[1][2]" in cleaned
