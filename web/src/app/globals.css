@@ -51,6 +51,7 @@
 }
 
 :root {
+  color-scheme: light;
   --background: oklch(0.985 0.004 280);
   --foreground: oklch(0.2 0.03 280);
   --card: oklch(1 0 0);
@@ -88,6 +89,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: oklch(0.135 0.02 280);
   --foreground: oklch(0.97 0.005 280);
   --card: oklch(0.18 0.025 280);
@@ -181,4 +183,12 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* React Flow: let our theme show through instead of its own dark/light backgrounds */
+.react-flow {
+  --xy-background-color: transparent;
+  --xy-edge-stroke-default: color-mix(in oklch, var(--foreground) 35%, transparent);
+  --xy-edge-label-background-color-default: var(--card);
+  --xy-edge-label-color-default: var(--muted-foreground);
 }
