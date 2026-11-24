@@ -74,3 +74,17 @@ def concept_env(settings):
     ids = {name: svc.ingest_bytes(name, text.encode()).doc_id for name, text in CONCEPT_DOCS.items()}
     yield HybridRetriever(emb, store, svc.bm25), svc, ids
     store.close()
+
+
+PLAN_JSON = '{"strategy": "direct", "standalone_query": "how many PTO days", "sub_queries": ["how many PTO days"], "reasoning": "simple"}'
+CRITIC_OK_JSON = '{"sufficient": true, "relevance": 0.9, "coverage": 0.9, "relevant_sources": [1]}'
+ANSWER_TEXT = "Full-time employees receive 20 days of PTO [1]."
+
+# Scripted judge responses (same ScriptedLLM serves agents and judge in API tests)
+EVAL_SCRIPTS = {
+    "eval_claims": '{"claims": ["Full-time employees receive 20 days of PTO"]}',
+    "eval_verify": '{"verdicts": [{"claim": "x", "supported": true}]}',
+    "eval_questions": '{"questions": ["How many PTO days do employees get?"], "noncommittal": false}',
+    "eval_ctx_relevance": '{"verdicts": [{"index": 1, "useful": true}]}',
+    "eval_recall": '{"statements": [{"statement": "20 days", "attributed": true}]}',
+}
