@@ -1,0 +1,37 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+next-env.d.ts
+
+# Secrets and local config
+.env
+.env.local
+.env.*.local
+
+# Backend runtime state
+backend/data/store/
+backend/data/qdrant/
+backend/data/uploads/
+backend/data/*.db
+
+# Third-party documents used for manual testing (not ours to redistribute)
+test_docs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
