@@ -7,6 +7,14 @@ export const METRIC_LABELS: Record<MetricName, string> = {
   context_recall: "Context recall",
 }
 
+/** Short axis labels: the full names do not fit around a radar chart on narrow screens. */
+export const METRIC_SHORT: Record<MetricName, string> = {
+  faithfulness: "Faithfulness",
+  answer_relevancy: "Relevancy",
+  context_precision: "Precision",
+  context_recall: "Recall",
+}
+
 export const METRIC_HELP: Record<MetricName, string> = {
   faithfulness: "Share of the answer's claims that the retrieved text actually supports. Low means hallucination.",
   answer_relevancy: "How directly the answer addresses the question, regardless of whether it is correct.",
@@ -31,12 +39,18 @@ export const TONE_CLASS: Record<Tone, string> = {
   none: "bg-muted text-muted-foreground",
 }
 
-export type RadarPoint = { metric: MetricName; label: string; value: number; missing: boolean }
+export type RadarPoint = { metric: MetricName; label: string; short: string; value: number; missing: boolean }
 
 export function radarData(aggregate: Aggregate | undefined): RadarPoint[] {
   return METRIC_NAMES.map((metric) => {
     const v = aggregate?.[metric]
-    return { metric, label: METRIC_LABELS[metric], value: v ?? 0, missing: v === null || v === undefined }
+    return {
+      metric,
+      label: METRIC_LABELS[metric],
+      short: METRIC_SHORT[metric],
+      value: v ?? 0,
+      missing: v === null || v === undefined,
+    }
   })
 }
 
