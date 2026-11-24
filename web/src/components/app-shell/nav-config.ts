@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings2, type LucideIcon } from "lucide-react"
+import { FileStack, LayoutDashboard, Settings2, type LucideIcon } from "lucide-react"
 
 export type NavItem = {
   href: string
@@ -10,6 +10,7 @@ export type NavItem = {
 /** Single source of truth for the sidebar, the mobile menu and the command palette. */
 export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Overview", description: "What EKA is and how the backend is doing", icon: LayoutDashboard },
+  { href: "/documents", label: "Documents", description: "Upload and manage the knowledge base", icon: FileStack },
   { href: "/settings", label: "Settings", description: "Backend URL, theme and connection status", icon: Settings2 },
 ]
 
