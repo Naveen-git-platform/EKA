@@ -19,5 +19,3 @@ pypdf>=4.2
 python-docx>=1.1
 # --- Evaluation (custom LLM-as-judge is default; ragas is an optional backend) ---
 ragas>=0.4
-# --- Frontend ---
-streamlit>=1.36
