@@ -159,6 +159,14 @@ describe("BenchmarkChart", () => {
     expect(within(screen.getByRole("table")).getByText("97.0%")).toBeInTheDocument()
   })
 
+  it("defines a valid CSS colour variable for every method (names with spaces rendered black bars)", () => {
+    const { container } = render(<BenchmarkChart benchmark={benchmark} />)
+    const css = container.querySelector("style")?.textContent ?? ""
+    const names = [...css.matchAll(/--color-([^:\s]+):/g)].map((m) => m[1])
+    expect(new Set(names).size).toBe(2) // one per method
+    for (const n of names) expect(n).toMatch(/^[a-z][a-z0-9_-]*$/i)
+  })
+
   it("shows n/a for combinations the benchmark does not contain", () => {
     const sparse = { ...benchmark, results: { m: { all: { "recall@3": 1 }, keyword: {} } } }
     render(<BenchmarkChart benchmark={sparse} />)

@@ -35,8 +35,15 @@ export function BenchmarkChart({ benchmark }: { benchmark: Benchmark }) {
   const best = bestMethod(benchmark, metric)
   const defaultMethod = methods(benchmark).find(isDefaultMethod)
 
+  // Chart keys end up in CSS custom properties (--color-<key>), so they must be plain identifiers; the human-readable
+  // method names ("hybrid (weighted 0.7)") only live in the config labels.
+  const keys = labels.map((_, i) => `m${i}`)
+  const chartRows = rows.map((r) => ({
+    category: r.category,
+    ...Object.fromEntries(labels.map((l, i) => [keys[i], r[l]])),
+  }))
   const config: ChartConfig = Object.fromEntries(
-    labels.map((l, i) => [l, { label: l, color: COLORS[i % COLORS.length] }]),
+    labels.map((l, i) => [keys[i], { label: l, color: COLORS[i % COLORS.length] }]),
   )
 
   return (
@@ -69,7 +76,7 @@ export function BenchmarkChart({ benchmark }: { benchmark: Benchmark }) {
         </div>
 
         <ChartContainer config={config} className="h-72 w-full">
-          <BarChart data={rows} margin={{ left: -16, right: 8, top: 8 }}>
+          <BarChart data={chartRows} margin={{ left: -16, right: 8, top: 8 }}>
             <CartesianGrid vertical={false} />
             <XAxis dataKey="category" tickLine={false} axisLine={false} />
             <YAxis
@@ -81,13 +88,8 @@ export function BenchmarkChart({ benchmark }: { benchmark: Benchmark }) {
             />
             <ChartTooltip content={<ChartTooltipContent formatter={(v) => formatPercent(Number(v), 1)} />} />
             <ChartLegend content={<ChartLegendContent />} />
-            {labels.map((l) => (
-              <Bar
-                key={l}
-                dataKey={l}
-                fill={`var(--color-${l.replace(/[^a-zA-Z0-9_-]/g, "-")})`}
-                radius={[4, 4, 0, 0]}
-              />
+            {keys.map((k) => (
+              <Bar key={k} dataKey={k} fill={`var(--color-${k})`} radius={[4, 4, 0, 0]} />
             ))}
           </BarChart>
         </ChartContainer>
