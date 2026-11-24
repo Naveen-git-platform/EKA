@@ -23,6 +23,9 @@ window.matchMedia ??= ((query: string) => ({
   removeListener: () => {},
   dispatchEvent: () => false,
 })) as unknown as typeof window.matchMedia
+globalThis.DOMMatrixReadOnly ??= class {
+  m22 = 1
+} as unknown as typeof DOMMatrixReadOnly
 Element.prototype.scrollIntoView ??= vi.fn()
 
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }))
