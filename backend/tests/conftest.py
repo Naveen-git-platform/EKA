@@ -60,3 +60,17 @@ def ingestion(settings, embedder, vector_store) -> IngestionService:
 @pytest.fixture
 def sample_docs_dir() -> Path:
     return SAMPLE_DOCS
+
+
+@pytest.fixture
+def concept_env(settings):
+    """Small corpus + semantic ConceptEmbedder: (HybridRetriever, IngestionService, {filename: doc_id})."""
+    from app.retrieval.hybrid_retriever import HybridRetriever
+    from tests.helpers import CONCEPT_DOCS, CONCEPTS, ConceptEmbedder
+
+    emb = ConceptEmbedder(CONCEPTS)
+    store = VectorStore.in_memory(dim=emb.dim)
+    svc = IngestionService.from_settings(settings, emb, store)
+    ids = {name: svc.ingest_bytes(name, text.encode()).doc_id for name, text in CONCEPT_DOCS.items()}
+    yield HybridRetriever(emb, store, svc.bm25), svc, ids
+    store.close()
