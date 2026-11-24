@@ -79,6 +79,7 @@ class Settings(BaseSettings):
     eval_concurrency: int = Field(default=2, ge=1, le=16)
     eval_questions_path: Path = Path("data/eval/questions.json")
     sample_docs_dir: Path = Path("data/sample_docs")
+    benchmark_results_path: Path = Path("docs/benchmark_results.json")
 
     # --- frontend ---
     backend_url: str = "http://localhost:8000"
