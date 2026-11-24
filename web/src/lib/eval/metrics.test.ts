@@ -32,6 +32,8 @@ describe("radarData", () => {
     expect(d.map((p) => p.metric)).toEqual(["faithfulness", "answer_relevancy", "context_precision", "context_recall"])
     expect(d.map((p) => p.missing)).toEqual([false, true, false, true])
     expect(d[0].value).toBe(0.9)
+    expect(d.map((p) => p.short)).toEqual(["Faithfulness", "Relevancy", "Precision", "Recall"])
+    expect(d.every((p) => p.short.length <= 12)).toBe(true) // must fit beside a radar axis
   })
 
   it("handles no data at all", () => {

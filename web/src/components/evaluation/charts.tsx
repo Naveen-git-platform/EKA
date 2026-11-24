@@ -66,10 +66,10 @@ export function ScoreRadar({ aggregate }: { aggregate: Aggregate | undefined }) 
       }
     >
       <ChartContainer config={radarConfig} className="mx-auto aspect-square max-h-64">
-        <RadarChart data={data} outerRadius="70%">
+        <RadarChart data={data} outerRadius="62%" margin={{ top: 16, right: 24, bottom: 16, left: 24 }}>
           <ChartTooltip content={<ChartTooltipContent hideLabel formatter={(v) => formatPercent(Number(v))} />} />
           <PolarGrid />
-          <PolarAngleAxis dataKey="label" />
+          <PolarAngleAxis dataKey="short" />
           <PolarRadiusAxis domain={[0, 1]} tick={false} axisLine={false} />
           <Radar dataKey="value" stroke="var(--color-value)" fill="var(--color-value)" fillOpacity={0.3} />
         </RadarChart>
