@@ -1,4 +1,12 @@
-import { BarChart3, FileStack, LayoutDashboard, MessageSquareText, Settings2, type LucideIcon } from "lucide-react"
+import {
+  BarChart3,
+  FileStack,
+  Orbit,
+  LayoutDashboard,
+  MessageSquareText,
+  Settings2,
+  type LucideIcon,
+} from "lucide-react"
 
 export type NavItem = {
   href: string
@@ -13,6 +21,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/chat", label: "Chat", description: "Ask questions and see the agents work", icon: MessageSquareText },
   { href: "/documents", label: "Documents", description: "Upload and manage the knowledge base", icon: FileStack },
   { href: "/evaluation", label: "Evaluation", description: "Answer quality scores and runs", icon: BarChart3 },
+  { href: "/insights", label: "Insights", description: "Retrieval benchmark and the 3D knowledge map", icon: Orbit },
   { href: "/settings", label: "Settings", description: "Backend URL, theme and connection status", icon: Settings2 },
 ]
 
