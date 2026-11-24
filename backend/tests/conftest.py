@@ -88,3 +88,22 @@ EVAL_SCRIPTS = {
     "eval_ctx_relevance": '{"verdicts": [{"index": 1, "useful": true}]}',
     "eval_recall": '{"statements": [{"statement": "20 days", "attributed": true}]}',
 }
+
+
+@pytest.fixture
+def api_env(settings, embedder, vector_store):
+    """(TestClient, Container, ScriptedLLM) wired with fakes - no network, no model downloads.
+
+    The client runs inside a persistent event-loop portal so background tasks (auto-evaluation, batches)
+    keep running between requests, exactly as under uvicorn.
+    """
+    from fastapi.testclient import TestClient
+
+    from app.core.container import Container
+    from app.core.llm import ScriptedLLM
+    from app.main import create_app
+
+    llm = ScriptedLLM({"planner": PLAN_JSON, "critic": CRITIC_OK_JSON, "answer": ANSWER_TEXT, **EVAL_SCRIPTS})
+    container = Container.build(settings, embedder=embedder, llm=llm, vector_store=vector_store)
+    with TestClient(create_app(settings, container=container)) as client:
+        yield client, container, llm
