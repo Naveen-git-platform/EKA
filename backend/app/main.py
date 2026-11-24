@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import documents, evaluate, health, query
+from app.api.routes import documents, evaluate, health, insights, query
 from app.core.config import Settings, get_settings
 from app.core.container import Container
 from app.core.logging import get_logger, setup_logging
@@ -55,6 +55,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
     app.include_router(documents.router)
     app.include_router(query.router)
     app.include_router(evaluate.router)
+    app.include_router(insights.router)
     return app
 
 

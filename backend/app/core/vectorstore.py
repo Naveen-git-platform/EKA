@@ -104,6 +104,31 @@ class VectorStore:
             raise VectorStoreError(f"Qdrant search failed: {exc}") from exc
         return [(Chunk(**p.payload), float(p.score)) for p in res.points if p.payload]
 
+    def scroll_vectors(
+        self, doc_ids: Sequence[str] | None = None, limit: int = 5000
+    ) -> list[tuple[Chunk, list[float]]]:
+        """Stored chunks with their embedding vectors (used for the 3D knowledge map). Capped at `limit`."""
+        out: list[tuple[Chunk, list[float]]] = []
+        offset = None
+        try:
+            while len(out) < limit:
+                points, offset = self.client.scroll(
+                    self.collection,
+                    scroll_filter=self._doc_filter(doc_ids),
+                    limit=min(256, limit - len(out)),
+                    offset=offset,
+                    with_payload=True,
+                    with_vectors=True,
+                )
+                for p in points:
+                    if p.payload and isinstance(p.vector, list):
+                        out.append((Chunk(**p.payload), [float(x) for x in p.vector]))
+                if offset is None:
+                    break
+        except Exception as exc:  # noqa: BLE001
+            raise VectorStoreError(f"Qdrant scroll failed: {exc}") from exc
+        return out
+
     def delete_document(self, doc_id: str) -> None:
         try:
             self.client.delete(
