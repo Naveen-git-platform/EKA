@@ -1,3 +1,4 @@
+import { HeroBackground } from "@/components/three/hero-background"
 import { FeatureGrid } from "@/components/overview/feature-grid"
 import { SystemStatusCard } from "@/components/overview/system-status-card"
 
@@ -5,6 +6,7 @@ export default function OverviewPage() {
   return (
     <div className="relative">
       <div className="bg-grid pointer-events-none absolute inset-x-0 top-0 h-96" aria-hidden />
+      <HeroBackground />
       <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 py-12 sm:px-6 sm:py-16">
         <section className="max-w-3xl space-y-5">
           <p className="bg-card/60 text-muted-foreground inline-flex items-center rounded-full border px-3 py-1 text-xs">
