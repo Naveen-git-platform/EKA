@@ -5,6 +5,9 @@ from pathlib import Path
 import pytest
 
 from app.core.config import Settings, get_settings
+from app.core.embeddings import FakeEmbedder
+from app.core.vectorstore import VectorStore
+from app.ingestion.indexer import IngestionService
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_DOCS = PROJECT_ROOT / "data" / "sample_docs"
@@ -35,3 +38,25 @@ def settings(tmp_path) -> Settings:
         eval_questions_path=EVAL_QUESTIONS,
         sample_docs_dir=SAMPLE_DOCS,
     )
+
+
+@pytest.fixture
+def embedder() -> FakeEmbedder:
+    return FakeEmbedder(dim=EMBED_DIM)
+
+
+@pytest.fixture
+def vector_store() -> VectorStore:
+    store = VectorStore.in_memory(dim=EMBED_DIM)
+    yield store
+    store.close()
+
+
+@pytest.fixture
+def ingestion(settings, embedder, vector_store) -> IngestionService:
+    return IngestionService.from_settings(settings, embedder, vector_store)
+
+
+@pytest.fixture
+def sample_docs_dir() -> Path:
+    return SAMPLE_DOCS

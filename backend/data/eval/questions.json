@@ -1,0 +1,436 @@
+[
+  {
+    "id": "q01",
+    "category": "standard",
+    "question": "How many PTO days do full-time employees get each year?",
+    "ground_truth": "20 days per calendar year.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "20 days"
+    ]
+  },
+  {
+    "id": "q02",
+    "category": "standard",
+    "question": "How many weeks of paid parental leave does the primary caregiver get?",
+    "ground_truth": "16 weeks of fully paid leave.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "16 weeks"
+    ]
+  },
+  {
+    "id": "q03",
+    "category": "standard",
+    "question": "What is the daily meal allowance when I am traveling?",
+    "ground_truth": "$75 per day.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "$75 per day"
+    ]
+  },
+  {
+    "id": "q04",
+    "category": "standard",
+    "question": "How long do I have to submit an expense report?",
+    "ground_truth": "Within 30 days of the purchase.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "within 30 days"
+    ]
+  },
+  {
+    "id": "q05",
+    "category": "standard",
+    "question": "How many days per year can I work from another country?",
+    "ground_truth": "A maximum of 20 days per calendar year.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "maximum of 20 days"
+    ]
+  },
+  {
+    "id": "q06",
+    "category": "standard",
+    "question": "What is the minimum password length?",
+    "ground_truth": "14 characters.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "14 characters"
+    ]
+  },
+  {
+    "id": "q07",
+    "category": "standard",
+    "question": "How quickly must a suspected security incident be reported?",
+    "ground_truth": "Within 1 hour of discovery.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "within 1 hour"
+    ]
+  },
+  {
+    "id": "q08",
+    "category": "standard",
+    "question": "What encryption is required for Restricted data?",
+    "ground_truth": "AES-256 at rest and TLS 1.2 or higher in transit.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "AES-256"
+    ]
+  },
+  {
+    "id": "q09",
+    "category": "standard",
+    "question": "How soon is access revoked after an employee leaves the company?",
+    "ground_truth": "Within 24 hours.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "within 24 hours"
+    ]
+  },
+  {
+    "id": "q10",
+    "category": "standard",
+    "question": "How much does the Business plan cost per user?",
+    "ground_truth": "$29 per user per month.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "$29 per user per month"
+    ]
+  },
+  {
+    "id": "q11",
+    "category": "standard",
+    "question": "What is the API rate limit on the Enterprise plan?",
+    "ground_truth": "6,000 requests per minute.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "6,000 requests per minute"
+    ]
+  },
+  {
+    "id": "q12",
+    "category": "standard",
+    "question": "What SLA credit is given if uptime drops below 99.9%?",
+    "ground_truth": "A 10% service credit.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "credit of 10%"
+    ]
+  },
+  {
+    "id": "q13",
+    "category": "standard",
+    "question": "How long can deleted files be recovered on the Business plan?",
+    "ground_truth": "90 days.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "90 days on the Business plan"
+    ]
+  },
+  {
+    "id": "q14",
+    "category": "standard",
+    "question": "What does error ERR-5031 mean and how do I fix it?",
+    "ground_truth": "The database connection pool is exhausted; raise DB_POOL_MAX to 200 and restart the affected pods.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "ERR-5031"
+    ]
+  },
+  {
+    "id": "q15",
+    "category": "standard",
+    "question": "What are the RTO and RPO for database recovery?",
+    "ground_truth": "RTO is 4 hours and RPO is 5 minutes.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "recovery time objective"
+    ]
+  },
+  {
+    "id": "q16",
+    "category": "standard",
+    "question": "Within how many minutes must an incident commander be assigned for a SEV-1?",
+    "ground_truth": "Within 10 minutes.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "within 10 minutes"
+    ]
+  },
+  {
+    "id": "q17",
+    "category": "standard",
+    "question": "Which command rolls back the api-gateway deployment?",
+    "ground_truth": "kubectl rollout undo deployment/api-gateway -n production",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "kubectl rollout undo"
+    ]
+  },
+  {
+    "id": "q18",
+    "category": "standard",
+    "question": "If a SEV-1 incident exposes EU customer data, what must happen and by when?",
+    "ground_truth": "Follow the Security Policy incident reporting steps: notify the authority and affected customers within 72 hours (GDPR); the runbook also requires a blameless postmortem within 5 business days.",
+    "relevant_docs": [
+      "security_policy.docx",
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "within 72 hours",
+      "within 5 business days"
+    ]
+  },
+  {
+    "id": "p01",
+    "category": "paraphrase",
+    "question": "What is the yearly vacation allowance for permanent employees?",
+    "ground_truth": "20 days per calendar year.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "20 days of paid time off"
+    ]
+  },
+  {
+    "id": "p02",
+    "category": "paraphrase",
+    "question": "How long can a new mother stay at home on full salary after having a baby?",
+    "ground_truth": "16 weeks of fully paid parental leave for the primary caregiver.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "16 weeks of fully paid parental leave"
+    ]
+  },
+  {
+    "id": "p03",
+    "category": "paraphrase",
+    "question": "What are the rules about coming into the office?",
+    "ground_truth": "At least 2 days per week, with Tuesday and Thursday as anchor days.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "at least 2 days per week"
+    ]
+  },
+  {
+    "id": "p04",
+    "category": "paraphrase",
+    "question": "How much money do I get to set up my workspace at home?",
+    "ground_truth": "A one-time home office stipend of $500.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "home office stipend of $500"
+    ]
+  },
+  {
+    "id": "p05",
+    "category": "paraphrase",
+    "question": "What is the shortest secret phrase allowed for logging in?",
+    "ground_truth": "Passwords need at least 14 characters.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "at least 14 characters long"
+    ]
+  },
+  {
+    "id": "p06",
+    "category": "paraphrase",
+    "question": "How fast must I tell the security team when something suspicious happens?",
+    "ground_truth": "Within 1 hour of discovery.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "within 1 hour of discovery"
+    ]
+  },
+  {
+    "id": "p07",
+    "category": "paraphrase",
+    "question": "What happens to a former colleague's system privileges after they depart?",
+    "ground_truth": "Their access is revoked within 24 hours of departure.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "within 24 hours of their departure"
+    ]
+  },
+  {
+    "id": "p08",
+    "category": "paraphrase",
+    "question": "Which subscription tier includes single sign-on?",
+    "ground_truth": "The Business plan (Enterprise adds SAML provisioning).",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "single sign-on (sso)"
+    ]
+  },
+  {
+    "id": "p09",
+    "category": "paraphrase",
+    "question": "How can I get compensation if the service is unavailable too often?",
+    "ground_truth": "A service credit of 10% of the monthly fee if uptime falls below 99.9%.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "service credit of 10%"
+    ]
+  },
+  {
+    "id": "p10",
+    "category": "paraphrase",
+    "question": "Who is the first person paged when production breaks completely?",
+    "ground_truth": "The on-call engineer is paged immediately for a SEV-1.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "on-call engineer is paged immediately"
+    ]
+  },
+  {
+    "id": "k01",
+    "category": "keyword",
+    "question": "What does SEC-POL-014 refer to?",
+    "ground_truth": "The tracking ID of the Information Security Policy.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "SEC-POL-014"
+    ]
+  },
+  {
+    "id": "k02",
+    "category": "keyword",
+    "question": "What does ERR-7002 mean?",
+    "ground_truth": "The message queue backlog is above 10,000 messages; scale the worker deployment.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "ERR-7002"
+    ]
+  },
+  {
+    "id": "k03",
+    "category": "keyword",
+    "question": "What is ERR-4290?",
+    "ground_truth": "A misconfigured rate limiter.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "ERR-4290"
+    ]
+  },
+  {
+    "id": "k04",
+    "category": "keyword",
+    "question": "What is DB_POOL_MAX used for?",
+    "ground_truth": "Raising it to 200 fixes ERR-5031, an exhausted database connection pool.",
+    "relevant_docs": [
+      "incident_runbook.pdf"
+    ],
+    "evidence": [
+      "DB_POOL_MAX"
+    ]
+  },
+  {
+    "id": "k05",
+    "category": "keyword",
+    "question": "What is 1-800-555-0142?",
+    "ground_truth": "Acme's anonymous ethics hotline.",
+    "relevant_docs": [
+      "employee_handbook.md"
+    ],
+    "evidence": [
+      "1-800-555-0142"
+    ]
+  },
+  {
+    "id": "k06",
+    "category": "keyword",
+    "question": "What is FIDO2 needed for?",
+    "ground_truth": "Production and administrator access requires a FIDO2 hardware security key.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "FIDO2 hardware security key"
+    ]
+  },
+  {
+    "id": "k07",
+    "category": "keyword",
+    "question": "Is AP-Singapore a supported region?",
+    "ground_truth": "Yes - workspaces can be hosted in US-East, EU-Frankfurt, or AP-Singapore.",
+    "relevant_docs": [
+      "product_faq.txt"
+    ],
+    "evidence": [
+      "AP-Singapore"
+    ]
+  },
+  {
+    "id": "k08",
+    "category": "keyword",
+    "question": "What is Jamf used for?",
+    "ground_truth": "Mobile device management enrollment for laptops.",
+    "relevant_docs": [
+      "security_policy.docx"
+    ],
+    "evidence": [
+      "Jamf"
+    ]
+  }
+]
